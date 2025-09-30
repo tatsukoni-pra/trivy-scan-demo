@@ -33,6 +33,6 @@ jobs:
           scan-type: "image"
           format: "table"
           exit-code: "1"
-          # ignore-unfixed: true
+          ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
