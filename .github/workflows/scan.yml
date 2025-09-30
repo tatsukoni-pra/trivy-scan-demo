@@ -1,22 +1,31 @@
 name: Scan with Trivity
 
-on: push
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   trivy:
     runs-on: ubuntu-latest
-    env:
-      ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+
+      - name: Set up docker build prereqs (Buildx)
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
         with:
+          context: src
           push: false
-          load: true
           tags: test-${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          load: true
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
